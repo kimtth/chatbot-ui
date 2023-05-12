@@ -46,11 +46,38 @@ export const Chatbar = () => {
     dispatch: chatDispatch,
   } = chatBarContextValue;
 
+  const handleApiTypeChange = useCallback(
+    (apiType: string) => {
+      homeDispatch({ field: 'apiType', value: apiType });
+
+      localStorage.setItem('apiType', apiType);
+    },
+    [homeDispatch],
+  );
+
   const handleApiKeyChange = useCallback(
     (apiKey: string) => {
       homeDispatch({ field: 'apiKey', value: apiKey });
 
       localStorage.setItem('apiKey', apiKey);
+    },
+    [homeDispatch],
+  );
+
+  const handleEndPointUrlChange = useCallback(
+    (endpointUrl: string) => {
+      homeDispatch({ field: 'endPointUrl', value: endpointUrl });
+
+      localStorage.setItem('endPointUrl', endpointUrl);
+    },
+    [homeDispatch],
+  );
+
+  const handleDeploymentIDChange = useCallback(
+    (deploymentID: string) => {
+      homeDispatch({ field: 'deploymentID', value: deploymentID });
+
+      localStorage.setItem('deploymentID', deploymentID);
     },
     [homeDispatch],
   );
@@ -216,7 +243,10 @@ export const Chatbar = () => {
         handleExportData,
         handlePluginKeyChange,
         handleClearPluginKey,
+        handleApiTypeChange,
         handleApiKeyChange,
+        handleEndPointUrlChange,
+        handleDeploymentIDChange
       }}
     >
       <Sidebar<Conversation>

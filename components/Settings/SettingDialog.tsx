@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect, useReducer, useRef } from 'react';
+import { FC, useContext, useEffect, useReducer, useState, useRef, SetStateAction } from 'react';
 
 import { useTranslation } from 'next-i18next';
 
@@ -9,6 +9,8 @@ import { getSettings, saveSettings } from '@/utils/app/settings';
 import { Settings } from '@/types/settings';
 
 import HomeContext from '@/pages/api/home/home.context';
+import { Key } from '@/components/Settings/Key';
+import ChatbarContext from '@/components/Chatbar/Chatbar.context';
 
 interface Props {
   open: boolean;
@@ -18,10 +20,17 @@ interface Props {
 export const SettingDialog: FC<Props> = ({ open, onClose }) => {
   const { t } = useTranslation('settings');
   const settings: Settings = getSettings();
+
   const { state, dispatch } = useCreateReducer<Settings>({
     initialState: settings,
   });
-  const { dispatch: homeDispatch } = useContext(HomeContext);
+  //`homeDispatch` is an alias for the dispatch function returned by the useContext hook.
+  const { state: { apiType, apiKey, endPointUrl, deploymentID }, dispatch: homeDispatch } = useContext(HomeContext);
+
+  const {
+    handleApiKeyChange, handleEndPointUrlChange, handleApiTypeChange, handleDeploymentIDChange
+  } = useContext(ChatbarContext);
+
   const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -73,15 +82,52 @@ export const SettingDialog: FC<Props> = ({ open, onClose }) => {
             </div>
 
             <div className="text-sm font-bold mb-2 text-black dark:text-neutral-200">
+              {t('OpenAI API Type')}
+            </div>
+
+            <select
+              className="w-full cursor-pointer bg-transparent p-2 text-neutral-700 dark:text-neutral-200"
+              value={apiType}
+              onChange={(event) => handleApiTypeChange(event.target.value)}
+            >
+              <option value="openai">{t('Open AI')}</option>
+              <option value="azure">{t('Azure')}</option>
+            </select>
+
+            <div className="mb-2" />
+
+            <div className="text-sm font-bold mb-2 text-black dark:text-neutral-200">
+              {t('OpenAI API Key')}
+            </div>
+
+            <Key title={'API Key'} apiKey={apiKey} onApiKeyChange={handleApiKeyChange} />
+
+            <div className="text-sm font-bold mb-2 text-black dark:text-neutral-200">
+              {t('Endpoint')}
+            </div>
+
+            <Key title={'Endpoint URL'} apiKey={endPointUrl} onApiKeyChange={handleEndPointUrlChange} />
+
+            <div className="mb-2" />
+
+            <div className="text-sm font-bold mb-2 text-black dark:text-neutral-200">
+              {t('Deployment ID')}
+            </div>
+
+            <Key title={'Deployment ID'} apiKey={deploymentID} onApiKeyChange={handleDeploymentIDChange} />
+
+            <div className="mb-2" />
+
+            <div className="text-sm font-bold mb-2 text-black dark:text-neutral-200">
               {t('Theme')}
             </div>
 
             <select
               className="w-full cursor-pointer bg-transparent p-2 text-neutral-700 dark:text-neutral-200"
               value={state.theme}
-              onChange={(event) =>
-                dispatch({ field: 'theme', value: event.target.value })
-              }
+              onChange={(event) => {
+                dispatch({ field: 'theme', value: event.target.value });
+              }}
             >
               <option value="dark">{t('Dark mode')}</option>
               <option value="light">{t('Light mode')}</option>
@@ -95,7 +141,7 @@ export const SettingDialog: FC<Props> = ({ open, onClose }) => {
                 onClose();
               }}
             >
-              {t('Save')}
+              {t('Close')}
             </button>
           </div>
         </div>

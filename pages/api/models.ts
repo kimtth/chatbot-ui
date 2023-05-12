@@ -6,27 +6,31 @@ export const config = {
   runtime: 'edge',
 };
 
+export interface ModelBody {
+  apiType: string;
+  apiKey: string;
+  endPointUrl: string;
+}
+
 const handler = async (req: Request): Promise<Response> => {
   try {
-    const { key } = (await req.json()) as {
-      key: string;
-    };
+    const { apiType, apiKey, endPointUrl } = (await req.json()) as ModelBody;
 
-    let url = `${OPENAI_API_HOST}/v1/models`;
-    if (OPENAI_API_TYPE === 'azure') {
-      url = `${OPENAI_API_HOST}/openai/deployments?api-version=${OPENAI_API_VERSION}`;
+    let url = `${endPointUrl}/v1/models`;
+    if (apiType === 'azure') {
+      url = `${endPointUrl}/openai/deployments?api-version=${OPENAI_API_VERSION}`;
     }
 
     const response = await fetch(url, {
       headers: {
         'Content-Type': 'application/json',
-        ...(OPENAI_API_TYPE === 'openai' && {
-          Authorization: `Bearer ${key ? key : process.env.OPENAI_API_KEY}`
+        ...(apiType === 'openai' && {
+          Authorization: `Bearer ${apiKey ? apiKey : process.env.OPENAI_API_KEY}`
         }),
-        ...(OPENAI_API_TYPE === 'azure' && {
-          'api-key': `${key ? key : process.env.OPENAI_API_KEY}`
+        ...(apiType === 'azure' && {
+          'api-key': `${apiKey ? apiKey : process.env.OPENAI_API_KEY}`
         }),
-        ...((OPENAI_API_TYPE === 'openai' && OPENAI_ORGANIZATION) && {
+        ...((apiType === 'openai' && OPENAI_ORGANIZATION) && {
           'OpenAI-Organization': OPENAI_ORGANIZATION,
         }),
       },
@@ -39,8 +43,7 @@ const handler = async (req: Request): Promise<Response> => {
       });
     } else if (response.status !== 200) {
       console.error(
-        `OpenAI API returned an error ${
-          response.status
+        `OpenAI API returned an error ${response.status
         }: ${await response.text()}`,
       );
       throw new Error('OpenAI API returned an error');
@@ -50,7 +53,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     const models: OpenAIModel[] = json.data
       .map((model: any) => {
-        const model_name = (OPENAI_API_TYPE === 'azure') ? model.model : model.id;
+        const model_name = (apiType === 'azure') ? model.model : model.id;
         for (const [key, value] of Object.entries(OpenAIModelID)) {
           if (value === model_name) {
             return {

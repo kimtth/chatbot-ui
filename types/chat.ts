@@ -10,7 +10,10 @@ export type Role = 'assistant' | 'user';
 export interface ChatBody {
   model: OpenAIModel;
   messages: Message[];
+  apitype: string;
   key: string;
+  endpointUrl: string;
+  deploymentId: string;
   prompt: string;
   temperature: number;
 }

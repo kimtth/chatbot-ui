@@ -27,29 +27,32 @@ export const OpenAIStream = async (
   model: OpenAIModel,
   systemPrompt: string,
   temperature : number,
+  apitype: string,
   key: string,
+  endpointUrl: string,
+  deploymentId: string,
   messages: Message[],
 ) => {
-  let url = `${OPENAI_API_HOST}/v1/chat/completions`;
-  if (OPENAI_API_TYPE === 'azure') {
-    url = `${OPENAI_API_HOST}/openai/deployments/${AZURE_DEPLOYMENT_ID}/chat/completions?api-version=${OPENAI_API_VERSION}`;
+  let url = `${endpointUrl}/v1/chat/completions`;
+  if (apitype === 'azure') {
+    url = `${endpointUrl}/openai/deployments/${deploymentId}/chat/completions?api-version=${OPENAI_API_VERSION}`;
   }
   const res = await fetch(url, {
     headers: {
       'Content-Type': 'application/json',
-      ...(OPENAI_API_TYPE === 'openai' && {
+      ...(apitype === 'openai' && {
         Authorization: `Bearer ${key ? key : process.env.OPENAI_API_KEY}`
       }),
-      ...(OPENAI_API_TYPE === 'azure' && {
+      ...(apitype === 'azure' && {
         'api-key': `${key ? key : process.env.OPENAI_API_KEY}`
       }),
-      ...((OPENAI_API_TYPE === 'openai' && OPENAI_ORGANIZATION) && {
+      ...((apitype === 'openai' && OPENAI_ORGANIZATION) && {
         'OpenAI-Organization': OPENAI_ORGANIZATION,
       }),
     },
     method: 'POST',
     body: JSON.stringify({
-      ...(OPENAI_API_TYPE === 'openai' && {model: model.id}),
+      ...(apitype === 'openai' && {model: model.id}),
       messages: [
         {
           role: 'system',

@@ -17,7 +17,10 @@ export interface ChatbarContextProps {
   handleImportConversations: (data: SupportedExportFormats) => void;
   handlePluginKeyChange: (pluginKey: PluginKey) => void;
   handleClearPluginKey: (pluginKey: PluginKey) => void;
+  handleApiTypeChange: (apiType: string) => void;
   handleApiKeyChange: (apiKey: string) => void;
+  handleEndPointUrlChange: (endpointUrl: string) => void;
+  handleDeploymentIDChange: (deploymentID: string) => void;
 }
 
 const ChatbarContext = createContext<ChatbarContextProps>(undefined!);

@@ -46,7 +46,10 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
       selectedConversation,
       conversations,
       models,
+      apiType,
       apiKey,
+      endPointUrl,
+      deploymentID,
       pluginKeys,
       serverSideApiKeyIsSet,
       messageIsStreaming,
@@ -96,7 +99,10 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
         const chatBody: ChatBody = {
           model: updatedConversation.model,
           messages: updatedConversation.messages,
+          apitype: apiType,
           key: apiKey,
+          endpointUrl: endPointUrl,
+          deploymentId: deploymentID,
           prompt: updatedConversation.prompt,
           temperature: updatedConversation.temperature,
         };
@@ -307,14 +313,6 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
   };
   const throttledScrollDown = throttle(scrollDown, 250);
 
-  // useEffect(() => {
-  //   console.log('currentMessage', currentMessage);
-  //   if (currentMessage) {
-  //     handleSend(currentMessage);
-  //     homeDispatch({ field: 'currentMessage', value: undefined });
-  //   }
-  // }, [currentMessage]);
-
   useEffect(() => {
     throttledScrollDown();
     selectedConversation &&
@@ -349,45 +347,7 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
 
   return (
     <div className="relative flex-1 overflow-hidden bg-white dark:bg-[#343541]">
-      {!(apiKey || serverSideApiKeyIsSet) ? (
-        <div className="mx-auto flex h-full w-[300px] flex-col justify-center space-y-6 sm:w-[600px]">
-          <div className="text-center text-4xl font-bold text-black dark:text-white">
-            Welcome to Chatbot UI
-          </div>
-          <div className="text-center text-lg text-black dark:text-white">
-            <div className="mb-8">{`Chatbot UI is an open source clone of OpenAI's ChatGPT UI.`}</div>
-            <div className="mb-2 font-bold">
-              Important: Chatbot UI is 100% unaffiliated with OpenAI.
-            </div>
-          </div>
-          <div className="text-center text-gray-500 dark:text-gray-400">
-            <div className="mb-2">
-              Chatbot UI allows you to plug in your API key to use this UI with
-              their API.
-            </div>
-            <div className="mb-2">
-              It is <span className="italic">only</span> used to communicate
-              with their API.
-            </div>
-            <div className="mb-2">
-              {t(
-                'Please set your OpenAI API key in the bottom left of the sidebar.',
-              )}
-            </div>
-            <div>
-              {t("If you don't have an OpenAI API key, you can get one here: ")}
-              <a
-                href="https://platform.openai.com/account/api-keys"
-                target="_blank"
-                rel="noreferrer"
-                className="text-blue-500 hover:underline"
-              >
-                openai.com
-              </a>
-            </div>
-          </div>
-        </div>
-      ) : modelError ? (
+      {modelError ? (
         <ErrorMessageDiv error={modelError} />
       ) : (
         <>
@@ -398,43 +358,55 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
           >
             {selectedConversation?.messages.length === 0 ? (
               <>
-                <div className="mx-auto flex flex-col space-y-5 md:space-y-10 px-3 pt-5 md:pt-12 sm:max-w-[600px]">
-                  <div className="text-center text-3xl font-semibold text-gray-800 dark:text-gray-100">
-                    {models.length === 0 ? (
-                      <div>
-                        <Spinner size="16px" className="mx-auto" />
-                      </div>
-                    ) : (
-                      'Chatbot UI'
-                    )}
+                <div className="mb-10" />
+
+                <div className="mx-auto flex h-full w-[300px] flex-col justify-center space-y-6 sm:w-[600px]">
+                  <div className="text-center text-4xl font-bold text-black dark:text-white">
+                    Welcome to Chatbot UI
+                  </div>
+                  <div className="text-center text-gray-500 dark:text-gray-400">
+                    <div className="mb-2">
+                      {t(
+                        'Please set your Azure OpenAI API key in the bottom left of the sidebar.',
+                      )}
+                    </div>
+                    <div>
+                      {t("If you don't have an Azure OpenAI API key, you can get one here: ")}
+                      <a
+                        href="https://azure.microsoft.com/en-us/products/cognitive-services/openai-service/"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-blue-500 hover:underline"
+                      >
+                        portal.azure.com
+                      </a>
+                    </div>
                   </div>
 
-                  {models.length > 0 && (
-                    <div className="flex h-full flex-col space-y-4 rounded-lg border border-neutral-200 p-4 dark:border-neutral-600">
-                      <ModelSelect />
+                  <div className="flex h-full flex-col space-y-4 rounded-lg border border-neutral-200 p-4 dark:border-neutral-600">
+                  <ModelSelect />
 
-                      <SystemPrompt
-                        conversation={selectedConversation}
-                        prompts={prompts}
-                        onChangePrompt={(prompt) =>
-                          handleUpdateConversation(selectedConversation, {
-                            key: 'prompt',
-                            value: prompt,
-                          })
-                        }
-                      />
+                  <SystemPrompt
+                    conversation={selectedConversation}
+                    prompts={prompts}
+                    onChangePrompt={(prompt) =>
+                      handleUpdateConversation(selectedConversation, {
+                        key: 'prompt',
+                        value: prompt,
+                      })
+                    }
+                  />
 
-                      <TemperatureSlider
-                        label={t('Temperature')}
-                        onChangeTemperature={(temperature) =>
-                          handleUpdateConversation(selectedConversation, {
-                            key: 'temperature',
-                            value: temperature,
-                          })
-                        }
-                      />
-                    </div>
-                  )}
+                  <TemperatureSlider
+                    label={t('Temperature')}
+                    onChangeTemperature={(temperature) =>
+                      handleUpdateConversation(selectedConversation, {
+                        key: 'temperature',
+                        value: temperature,
+                      })
+                    }
+                  />
+                </div>
                 </div>
               </>
             ) : (
@@ -444,24 +416,11 @@ export const Chat = memo(({ stopConversationRef }: Props) => {
                   : {selectedConversation?.temperature} |
                   <button
                     className="ml-2 cursor-pointer hover:opacity-50"
-                    onClick={handleSettings}
-                  >
-                    <IconSettings size={18} />
-                  </button>
-                  <button
-                    className="ml-2 cursor-pointer hover:opacity-50"
                     onClick={onClearAll}
                   >
                     <IconClearAll size={18} />
                   </button>
                 </div>
-                {showSettings && (
-                  <div className="flex flex-col space-y-10 md:mx-auto md:max-w-xl md:gap-6 md:py-3 md:pt-6 lg:max-w-2xl lg:px-0 xl:max-w-3xl">
-                    <div className="flex h-full flex-col space-y-4 border-b border-neutral-200 p-4 dark:border-neutral-600 md:rounded-lg md:border">
-                      <ModelSelect />
-                    </div>
-                  </div>
-                )}
 
                 {selectedConversation?.messages.map((message, index) => (
                   <MemoizedChatMessage

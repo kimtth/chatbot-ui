@@ -63,7 +63,9 @@ const Home = ({
 
   const {
     state: {
+      apiType,
       apiKey,
+      endPointUrl,
       lightMode,
       folders,
       conversations,
@@ -83,7 +85,9 @@ const Home = ({
 
       return getModels(
         {
-          key: apiKey,
+          apiType: apiType,
+          apiKey: apiKey,
+          endPointUrl: endPointUrl
         },
         signal,
       );

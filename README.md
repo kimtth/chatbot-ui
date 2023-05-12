@@ -1,3 +1,41 @@
+
+# Chatbot UI
+
+# Section 1. What was customized in this branch?
+
+1. Changed the position of API Key configuration part to Settings.
+2. Merged to Welcome message screen and model parameter setting area.
+3. Removed Google Plugin setting area.
+4. Support dynamic update of API Key in Azure Open AI and Open AI
+5. Modified some messages. 
+6. Simplify Chatbar.
+
+- Welcome/Chat screen
+
+[<img src="./img/img_01.png" width="500" />](./img/img_01.png)
+
+- Settings
+
+To remove a dependency to .env file.
+
+[<img src="./img/img_02.png" width="500" />](./img/img_01.png)
+
+- Chatbar
+
+[<img src="./img/img_03.png" width="200" />](./img/img_01.png)
+
+References: 
+
+- https://github.com/mckaywrigley/chatbot-ui
+
+- https://github.com/cogentapps/chat-with-gpt
+
+- https://github.com/AnoyiX/chatgpt-ui
+
+- https://github.com/Fakhruu/chatgpt-ui
+
+# Section 2. README of the source branch
+
 # Chatbot UI
 
 Chatbot UI is an open source chat UI for AI models.
@@ -103,3 +141,5 @@ If you don't have an OpenAI API key, you can get one [here](https://platform.ope
 If you have any questions, feel free to reach out to Mckay on [Twitter](https://twitter.com/mckaywrigley).
 
 [GCSE]: https://developers.google.com/custom-search/v1/overview
+
+

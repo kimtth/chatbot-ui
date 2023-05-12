@@ -6,7 +6,10 @@ import { PluginKey } from '@/types/plugin';
 import { Prompt } from '@/types/prompt';
 
 export interface HomeInitialState {
+  apiType: string,
   apiKey: string;
+  endPointUrl: string,
+  deploymentID: string,
   pluginKeys: PluginKey[];
   loading: boolean;
   lightMode: 'light' | 'dark';
@@ -30,7 +33,10 @@ export interface HomeInitialState {
 }
 
 export const initialState: HomeInitialState = {
+  apiType: '',
   apiKey: '',
+  endPointUrl: 'https://<endpoint>.openai.azure.com',
+  deploymentID: '',
   loading: false,
   pluginKeys: [],
   lightMode: 'dark',
