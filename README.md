@@ -1,7 +1,7 @@
 
 # Chatbot UI
 
-# Section 1. What was customized in this branch?
+# Section 1. What is customized in this branch?
 
 1. Changed the position of API Key configuration part to Settings.
 2. Merged to Welcome message screen and model parameter setting area.
@@ -10,11 +10,11 @@
 5. Modified some messages. 
 6. Simplify Chatbar.
 
-- Welcome/Chat screen
+- Welcome & Chat screen
 
 [<img src="./img/img_01.png" width="500" />](./img/img_01.png)
 
-- Settings
+- Settings dialog
 
 To remove a dependency to .env file.
 
